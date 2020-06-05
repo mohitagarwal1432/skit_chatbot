@@ -58,10 +58,11 @@ li[data-expend="yes"]>.nested
 
 .form-div
 {
-    opacity: 0;
+    display: none;
 }
 .active
 {
+    display: block;
     animation: fade 2s 1;
     animation: fade 0.5s linear 0s 1 forwards;
 }
@@ -92,12 +93,21 @@ li[data-expend="yes"]>.nested
         opacity: 1;
     }
 }
-.add-dom
+.close-form
+{
+    position:absolute;
+    top:10px;
+    cursor: pointer;
+    right:20px;
+    color:white;
+}
+.add-question-circle,.update-question-circle,.delete-question-circle
 {
     background-color: skyblue;
     border-radius: 50%;
     width:50px;
     height:50px;
+    margin:0px 5px;
     float: right;;
     display:flex;
     justify-content: center;
@@ -105,11 +115,19 @@ li[data-expend="yes"]>.nested
     color: white;
     cursor: pointer;
 }
-.add-dom:hover
+.update-question-circle
+{
+    background-color: orange;
+}
+.delete-question-circle
+{
+    background-color: red;
+}
+.add-question-circle:hover,.update-question-circle:hover,.delete-question-circle:hover
 {
     box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.2);
 }
-.add-dom:after
+.add-question-circle:after
 {
     content: "+";
 }

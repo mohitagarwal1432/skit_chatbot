@@ -31,10 +31,10 @@ class Chatbot
                 $content = $row["Content"];
                 if($type=='button')
                 {
-                    echo "<li data-expend='no' data-qid='$qid'><span class='caret' onclick='loadQuestion(this)'>$content</span>";
+                    echo "<li data-expend='no' data-type='$type' data-qid='$qid' data-content='$content'><span class='caret' onclick='loadQuestion(this)'>$content</span>";
                 }
                 else
-                    echo "<li>$content</li>" ;
+                    echo "<li data-type='$type' data-qid='$qid' data-content='$content' onclick='changeSelectionForNormalList(this)'>$content</li>" ;
             }
         }
         echo "</ul>";
@@ -45,6 +45,47 @@ class Chatbot
         values($qid,'$type','$content')";
         $result=$this->conn->query($sql);        
     }
+    public function updateQuestion($type,$content,$qid)
+    {
+        $sql="UPDATE question set Type='$type', Content = '$content' WHERE Qid=$qid";
+        $result=$this->conn->query($sql);        
+    }
+    public function deleteQuestion($qid)
+    {
+        if($qid!=1)
+        {
+            $sql="DELETE FROM question WHERE Qid=$qid";
+            $result=$this->conn->query($sql); 
+
+            $sql="DELETE FROM question WHERE Displayon=$qid";
+            $result=$this->conn->query($sql);
+
+            $this->deleteComplete();   
+        }
+    }
+    public function deleteComplete()
+    {
+        $sql="SELECT * FROM question";
+        $result=$this->conn->query($sql); 
+        while($row=$result->fetch_assoc())
+        {
+            $on=$row["Displayon"];
+            if($on!=0)
+            {
+                $sql1="SELECT * FROM question WHERE Qid=$on";
+                $result1=$this->conn->query($sql1); 
+                if($result1->num_rows==0)
+                {
+                    $sql2="DELETE FROM question WHERE Displayon=$on";
+                    $result2=$this->conn->query($sql2);                
+                }   
+            }
+            
+        }
+        
+        
+    }
+    
     
 }
 
@@ -69,6 +110,21 @@ switch($function)
         $content = utf8_encode($content);
         $qid = utf8_encode($qid);
         $bot->addQuestion($type,$content,$qid);        
+        break;
+    case "update_question": 
+        $type = $_POST["type"];
+        $content = $_POST["content"];
+        $qid = $_POST["qid"];
+        $type = utf8_encode($type);
+        $content = utf8_encode($content);
+        $qid = utf8_encode($qid);
+        $bot->updateQuestion($type,$content,$qid);        
+        break;
+    case "delete_question": 
+        $qid = $_POST["qid"];
+        $qid = utf8_encode($qid);
+        $bot->deleteQuestion($qid);        
+        //$bot->deleteComplete();        
         break;
    
 }

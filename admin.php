@@ -5,25 +5,28 @@
 <head>
     <title>SKIT bot - Admin pannel</title>
     <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     <script>
         var selected=0;
-        var selectedPrev=0;
+        var update=0;
         function loadQuestion(ele) 
         {
-            selected=ele.parentElement;
-            if(selectedPrev)
+            if(selected)
             {
                 console.log("selected");
-                selectedPrev.style.color="black";
-                selected.style.color="blue";
-                selectedPrev=ele.parentElement;
+                selected.style.color="black";
             }
-            else
+            if(update)
             {
-                console.log("not selected");
-                selected.style.color="blue";
-                selectedPrev=ele.parentElement; 
+                console.log("update");
+                update.style.color="black";
+                update=0;
             }
+            selected=ele.parentElement;
+            update=selected;
+            document.getElementById("update-content").value=update.dataset.content;
+            document.getElementById("update-type").value=update.dataset.type;
+            selected.style.color="blue";
             if(ele.parentElement.dataset.expend=="no")
             {
                 var qid=ele.parentElement.dataset.qid;
@@ -58,6 +61,9 @@
         {
             if(selected)
             {
+                document.getElementById("circle-button").style.display="none";
+                document.getElementById("update-form").style.display="none";
+                document.getElementById("form").style.display="block";
                 document.getElementById("form").classList.toggle("active");
                 document.getElementById("bottom-div").classList.toggle("align-botton-background");
             }
@@ -96,7 +102,105 @@
             document.getElementById("content").value="";
             return false;
         }
-        
+        function takeUpdate()
+        {
+            if(update)
+            {
+                document.getElementById("circle-button").style.display="none";
+                document.getElementById("form").style.display="none";
+                document.getElementById("update-form").style.display="block";
+                document.getElementById("update-form").classList.toggle("active");
+                document.getElementById("bottom-div").classList.toggle("align-botton-background");
+            }
+            else
+            {
+                alert("Please select a stage to update question.");
+            }
+        }
+        function updateQuestion()
+        {
+            if(update)
+            {
+                var content=document.getElementById("update-content").value;
+                var type=document.getElementById("update-type").value;
+                var qid=update.dataset.qid;
+                
+                var xhttp;
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() 
+                {
+                    if (this.readyState == 4 && this.status == 200) 
+                    {
+                        alert("successful");
+                        
+                    }
+                    else
+                    {
+                        
+                    }
+                };
+                xhttp.open("POST", "back-end.php", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send("function=update_question&type="+type+"&content="+content+"&qid="+qid);
+                
+            }
+            document.getElementById("content").value="";
+            return false;
+        }
+        function closeForm()
+        {
+            document.getElementById("form").style.display="none";
+            document.getElementById("update-form").style.display="none";
+            document.getElementById("circle-button").style.display="block";
+            document.getElementById("form").classList.toggle("active");
+            document.getElementById("bottom-div").classList.toggle("align-botton-background");
+        }
+        function deleteQuestion()
+        {
+            if(update)
+            {
+                var qid=update.dataset.qid;
+                
+                var xhttp;
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() 
+                {
+                    if (this.readyState == 4 && this.status == 200) 
+                    {
+                        alert("successful");
+                        
+                    }
+                    else
+                    {
+                        
+                    }
+                };
+                xhttp.open("POST", "back-end.php", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send("function=delete_question&qid="+qid);
+                
+            }
+        }
+        function changeSelectionForNormalList(ele)
+        {
+            if(update)
+            {
+                console.log("update");
+                update.style.color="black";
+            }
+            if(selected)
+            {
+                console.log("selected");
+                selected.style.color="black";
+                selected=0;
+            }
+            update=ele;
+            document.getElementById("update-content").value=ele.dataset.content;
+            document.getElementById("update-type").value=ele.dataset.type;
+            
+            update.style.color="orange";
+            
+        }
     </script>
 </head>
 <body>
@@ -109,7 +213,7 @@
                 $type=$row["Type"];
                 $qid=$row["Qid"];
                 $content = $row["Content"];
-                echo "<li data-expend='no' data-qid='$qid'>
+                echo "<li data-expend='no' data-qid='$qid' data-content='$content' data-type='$type'>
                     <span class='caret' onclick='loadQuestion(this)'>$content</span>
                     </li>" ;
             }
@@ -117,6 +221,7 @@
     </ul>
     <div class="align-bottom" id="bottom-div">
         <div class="form-div" id="form">
+            <h3 class='close-form' onclick="closeForm();">&#10060;</h3>
             <h3 style="color:white;text-align:center">Add Question</h3>
             <form onsubmit="return addQuestion()">
                 <select id="type" required>
@@ -132,8 +237,30 @@
                 <input type="submit" value="Add">
             </form>
         </div>
-        <div class="add-dom" onclick="takeInput()"></div>
+        <div class="form-div" id="update-form">
+            <h3 style="color:white;text-align:center">Update Question</h3>
+            <h3 class='close-form' onclick="closeForm();">&#10060;</h3>
+            <form onsubmit="return updateQuestion()">
+                <select id="update-type" required>
+                    <option value="button">Button</option>
+                    <option value="text">Text</option>
+                    <option value="img">Image</option>
+                    <option value="link">Link</option>
+                    <option value="download">Download</option>
+                </select>
+                <br><br>
+                <input type="text" id="update-content" placeholder="Enter the content" required>
+                <br><br>
+                <input type="submit" value="Add">
+            </form>
+        </div>
+        <div id="circle-button">
+            <div class="add-question-circle" onclick="takeInput()" title="Add Question"></div>
+            <div class="update-question-circle" onclick="takeUpdate()" title="Update Question"><i class="fas fa-pencil-alt"></i></div>
+            <div class="delete-question-circle" onclick="deleteQuestion()" title="Delete Question"><i class="fas fa-trash-alt"></i></div>
+        </div>
     </div>
+    
     
     
 </body>
