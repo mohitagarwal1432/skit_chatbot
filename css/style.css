@@ -1,0 +1,121 @@
+body
+{
+    margin: 0px;
+    padding: 0px;
+}
+ul, #myUL 
+{
+    list-style-type: none;
+}
+
+#myUL
+{
+    margin: 0;
+    padding: 0;
+}
+.caret 
+{
+    cursor: pointer;
+    user-select: none;
+}
+.caret::before 
+{
+    content: "\25B6";
+    color: black;
+    display: inline-block;
+    margin-right: 6px;
+}
+.caret-down::before 
+{
+    transform: rotate(90deg);
+}
+.nested 
+{
+    display: none;
+}
+li[data-expend="yes"]
+{
+    font-weight: bolder;
+}
+li[data-expend="yes"]>.nested
+{
+    font-weight: normal;
+    color:black;
+    display: block;
+}
+.align-bottom
+{
+    position:fixed;
+    right: 40px;
+    bottom: 30px;
+    padding: 20px;
+}
+.align-botton-background
+{
+    background-color: rgba(0,0,0,0.8);
+    animation: fade 0.5s linear 0s 1 forwards;
+}
+
+.form-div
+{
+    opacity: 0;
+}
+.active
+{
+    animation: fade 2s 1;
+    animation: fade 0.5s linear 0s 1 forwards;
+}
+@keyframes fade
+{
+    0%
+    {
+        opacity: 0;
+    }
+    20%
+    {
+        opacity: 0.2;
+    }
+    40%
+    {
+        opacity: 0.4;
+    }
+    60%
+    {
+        opacity: 0.6;
+    }
+    80%
+    {
+        opacity: 0.8;
+    }
+    100%
+    {
+        opacity: 1;
+    }
+}
+.add-dom
+{
+    background-color: skyblue;
+    border-radius: 50%;
+    width:50px;
+    height:50px;
+    float: right;;
+    display:flex;
+    justify-content: center;
+    align-items: center;
+    color: white;
+    cursor: pointer;
+}
+.add-dom:hover
+{
+    box-shadow: 0px 0px 5px 1px rgba(0,0,0,0.2);
+}
+.add-dom:after
+{
+    content: "+";
+}
+input[type="text"],input[type="submit"],select
+{
+    padding:5px 10px;
+    min-width: 300px;
+}
+</style>
