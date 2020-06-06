@@ -5,6 +5,7 @@
 <head>
     <title>SKIT bot - Admin pannel</title>
     <link rel="stylesheet" href="css/style.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     <script>
         var selected=0;
@@ -31,19 +32,20 @@
             {
                 var qid=ele.parentElement.dataset.qid;
                 var spanData=ele.innerHTML;
+                //Outside becouse error this waws throwing error inside the if and else
+                selected.dataset.expend="yes";
+                
                 var xhttp;
                 xhttp = new XMLHttpRequest();
                 xhttp.onreadystatechange = function() 
                 {
                     if (this.readyState == 4 && this.status == 200) 
                     {
-                        ele.parentElement.dataset.expend="yes";
-                        
-                        ele.parentElement.innerHTML=this.responseText;
-                        ele.classList.toggle("caret-down");                        
+                        selected.innerHTML=this.responseText;                       
                     }
                     else
-                    {                        
+                    {    
+                        selected.innerHTML="<span class='caret'>"+spanData+"</span><ul class='nested'><li><img src='photos/load.gif'></li></ul>";                   
                     }
                 };
                 xhttp.open("POST", "back-end.php", true);
@@ -86,12 +88,14 @@
                 {
                     if (this.readyState == 4 && this.status == 200) 
                     {
-                        alert("successful");
-                        
+                        alert("Successful, Referesh page to see change.");
+                        document.getElementById("form").style.display="block";
+                        document.getElementById("form-loader").style.display="none";
                     }
                     else
                     {
-                        
+                        document.getElementById("form").style.display="none";
+                        document.getElementById("form-loader").style.display="block";
                     }
                 };
                 xhttp.open("POST", "back-end.php", true);
@@ -131,12 +135,14 @@
                 {
                     if (this.readyState == 4 && this.status == 200) 
                     {
-                        alert("successful");
-                        
+                        alert("Successful, Referesh page to see change.");
+                        document.getElementById("update-form").style.display="block";
+                        document.getElementById("form-loader").style.display="none";
                     }
                     else
                     {
-                        
+                        document.getElementById("update-form").style.display="none";
+                        document.getElementById("form-loader").style.display="block";
                     }
                 };
                 xhttp.open("POST", "back-end.php", true);
@@ -159,6 +165,42 @@
         {
             if(update)
             {
+                areYouSure = confirm("Are you sure you want to delete - \""+update.dataset.content+"\" and the questions inside this.");
+                if(areYouSure)
+                {
+                    var qid=update.dataset.qid;
+
+                    var xhttp;
+                    xhttp = new XMLHttpRequest();
+                    xhttp.onreadystatechange = function() 
+                    {
+                        if (this.readyState == 4 && this.status == 200) 
+                        {
+                            alert("Successful, Referesh page to see change.");
+                            document.getElementById("circle-button").style.display="block";
+                            document.getElementById("form-loader").style.display="none";
+                        }
+                        else
+                        {
+                            document.getElementById("circle-button").style.display="none";
+                            document.getElementById("form-loader").style.display="block";
+                        }
+                    };
+                    xhttp.open("POST", "back-end.php", true);
+                    xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                    xhttp.send("function=delete_question&qid="+qid);
+                }
+                
+            }
+            else
+            {
+                alert("Please select a stage to delete question.");
+            }
+        }
+        function moveUp()
+        {
+            if(update)
+            {
                 var qid=update.dataset.qid;
                 
                 var xhttp;
@@ -167,18 +209,56 @@
                 {
                     if (this.readyState == 4 && this.status == 200) 
                     {
-                        alert("successful");
-                        
+                        alert("Successful, Referesh page to see change.");
+                        document.getElementById("circle-button").style.display="block";
+                        document.getElementById("form-loader").style.display="none";
                     }
                     else
                     {
-                        
+                        document.getElementById("circle-button").style.display="none";
+                        document.getElementById("form-loader").style.display="block";
                     }
                 };
                 xhttp.open("POST", "back-end.php", true);
                 xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhttp.send("function=delete_question&qid="+qid);
+                xhttp.send("function=move_up&qid="+qid);
                 
+            }
+            else
+            {
+                alert("Please select a stage to move question up.");
+            }
+        }
+        function moveDown()
+        {
+            if(update)
+            {
+                var qid=update.dataset.qid;
+                
+                var xhttp;
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() 
+                {
+                    if (this.readyState == 4 && this.status == 200) 
+                    {
+                        alert("Successful, Referesh page to see change.");
+                        document.getElementById("circle-button").style.display="block";
+                        document.getElementById("form-loader").style.display="none";
+                    }
+                    else
+                    {
+                        document.getElementById("circle-button").style.display="none";
+                        document.getElementById("form-loader").style.display="block";
+                    }
+                };
+                xhttp.open("POST", "back-end.php", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send("function=move_down&qid="+qid);
+                
+            }
+            else
+            {
+                alert("Please select a stage to move question down.");
             }
         }
         function changeSelectionForNormalList(ele)
@@ -220,6 +300,9 @@
         ?>
     </ul>
     <div class="align-bottom" id="bottom-div">
+        <div style="text-align:center;display:none" id="form-loader">
+            <img src="photos/load.gif">
+        </div>
         <div class="form-div" id="form">
             <h3 class='close-form' onclick="closeForm();">&#10060;</h3>
             <h3 style="color:white;text-align:center">Add Question</h3>
@@ -255,14 +338,19 @@
             </form>
         </div>
         <div id="circle-button">
-            <div class="add-question-circle" onclick="takeInput()" title="Add Question"></div>
-            <div class="update-question-circle" onclick="takeUpdate()" title="Update Question"><i class="fas fa-pencil-alt"></i></div>
-            <div class="delete-question-circle" onclick="deleteQuestion()" title="Delete Question"><i class="fas fa-trash-alt"></i></div>
+            <div class="add-circle" style="background-color:#009e73" onclick="moveDown()" title="Move question down"><i class="fas fa-arrow-down"></i></div>
+            
+            <div class="add-circle" style="background-color:red" onclick="deleteQuestion()" title="Delete Question"><i class="fas fa-trash-alt"></i></div>
+            
+            <div class="add-circle" style="background-color:#0066ff" onclick="takeInput()" title="Add Question"><i class="fas fa-plus"></i></div>
+            
+            <div class="add-circle" style="background-color:orange" onclick="takeUpdate()" title="Update Question"><i class="fas fa-pencil-alt"></i></div>
+            
+            <div class="add-circle" style="background-color:#009e73" onclick="moveUp()" title="Move question up"><i class="fas fa-arrow-up"></i></div>
         </div>
     </div>
     
     
     
-</body>
 
 </html>

@@ -15,7 +15,39 @@ class Chatbot
     
     public function loadQuestion($qid,$spanData)
     {
-        $sql="SELECT * FROM question WHERE Displayon=$qid";
+        $sql="SELECT * FROM question WHERE Displayon=$qid ORDER BY Displayorder";
+        $result=$this->conn->query($sql);
+        echo "<span class='caret' onclick='loadQuestion(this)'>$spanData</span><ul class='nested'>" ;
+        if($result->num_rows==0)
+        {
+            echo "<li style='color:red'>No question found!</li>";
+        }
+        else
+        {
+            while($row=$result->fetch_assoc())
+            {
+                $type=$row["Type"];
+                $qid=$row["Qid"];
+                $content = $row["Content"];
+                if($type=='button')
+                {
+                    echo "<li data-expend='no' data-type='$type' data-qid='$qid' data-content='$content'><span class='caret' onclick='loadQuestion(this)'>$content</span>";
+                }
+                else
+                    echo "<li data-type='$type' data-qid='$qid' data-content='$content' onclick='changeSelectionForNormalList(this)'>$content</li>" ;
+            }
+        }
+        echo "</ul>";
+    }
+    public function refereshQuestion($qid)
+    {
+        
+        $sql="SELECT * FROM question WHERE Qid=$qid";
+        $result=$this->conn->query($sql);
+        $row=$result->fetch_assoc();
+        $spanData = $row["Content"];
+        
+        $sql="SELECT * FROM question WHERE Displayon=$qid ORDER BY Displayorder";
         $result=$this->conn->query($sql);
         echo "<span class='caret' onclick='loadQuestion(this)'>$spanData</span><ul class='nested'>" ;
         if($result->num_rows==0)
@@ -41,8 +73,12 @@ class Chatbot
     }
     public function addQuestion($type,$content,$qid)
     {
-        $sql="INSERT INTO question(Displayon,Type,Content)
-        values($qid,'$type','$content')";
+        $sql="SELECT Displayon as num FROM question WHERE Displayon=$qid";
+        $result=$this->conn->query($sql);
+        $count = $result->num_rows;
+        $count++;
+        $sql="INSERT INTO question(Displayon,Type,Content,Displayorder)
+        values($qid,'$type','$content',$count)";
         $result=$this->conn->query($sql);        
     }
     public function updateQuestion($type,$content,$qid)
@@ -81,9 +117,53 @@ class Chatbot
                 }   
             }
             
+        } 
+    }
+    public function moveUp($qid)
+    {
+        if($qid!=1)
+        {
+            $sql="SELECT * FROM question WHERE Qid=$qid";
+            $result=$this->conn->query($sql);
+            $row=$result->fetch_assoc();
+            
+            $order=$row["Displayorder"];
+            $on=$row["Displayon"];
+            
+            if($order!=1)
+            {
+                $less=$order-1;
+                
+                $sql="UPDATE question set Displayorder=$order WHERE Displayon=$on AND Displayorder=$less";
+                $result=$this->conn->query($sql); 
+                
+                $sql="UPDATE question set Displayorder=$less WHERE Qid=$qid";
+                $result=$this->conn->query($sql); 
+            }
         }
-        
-        
+    }
+    public function moveDown($qid)
+    {
+        if($qid!=1)
+        {
+            $sql="SELECT * FROM question WHERE Qid=$qid";
+            $result=$this->conn->query($sql);
+            $row=$result->fetch_assoc();
+            
+            $order=$row["Displayorder"];
+            $on=$row["Displayon"];
+            
+            if($order!=$result->num_rows)
+            {
+                $more=$order+1;
+                
+                $sql="UPDATE question set Displayorder=$order WHERE Displayon=$on AND Displayorder=$more";
+                $result=$this->conn->query($sql); 
+                
+                $sql="UPDATE question set Displayorder=$more WHERE Qid=$qid";
+                $result=$this->conn->query($sql); 
+            }
+        }
     }
     
     
@@ -101,6 +181,11 @@ switch($function)
         $span = $_POST["span"];
         $span = utf8_encode($span);
         $bot->loadQuestion($qid,$span);        
+        break;
+    case "referesh_question": 
+        $qid = $_POST["qid"];
+        $qid = utf8_encode($qid);
+        $bot->refereshQuestion($qid);        
         break;
     case "add_question": 
         $type = $_POST["type"];
@@ -124,6 +209,18 @@ switch($function)
         $qid = $_POST["qid"];
         $qid = utf8_encode($qid);
         $bot->deleteQuestion($qid);        
+        //$bot->deleteComplete();        
+        break;
+    case "move_up": 
+        $qid = $_POST["qid"];
+        $qid = utf8_encode($qid);
+        $bot->moveUp($qid);        
+        //$bot->deleteComplete();        
+        break;
+    case "move_down": 
+        $qid = $_POST["qid"];
+        $qid = utf8_encode($qid);
+        $bot->moveDown($qid);        
         //$bot->deleteComplete();        
         break;
    
