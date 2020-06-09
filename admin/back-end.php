@@ -1,5 +1,5 @@
 <?php
-include "../include/connect.php";
+include "verify.php";
 date_default_timezone_set('Asia/Kolkata');
 class Chatbot
 {
@@ -167,6 +167,76 @@ class Chatbot
             }
         }
     }
+    public function moveDiagonallyUp($qid)
+    {
+        if($qid!=1)
+        {
+            $sql="SELECT * FROM question WHERE Qid=$qid";
+            $result=$this->conn->query($sql);
+            $row=$result->fetch_assoc();
+            
+            $order=$row["Displayorder"];
+            $on=$row["Displayon"];
+            
+            $sql="SELECT * FROM question WHERE Displayon=$on";
+            $result=$this->conn->query($sql);
+            $count=$result->num_rows;
+            if($count>1)
+            {
+                for($i=$order+1;$i<=$count;$i++)
+                {
+                    $min=$i-1;
+                    $sql="UPDATE question set Displayorder=$min WHERE Displayon=$on AND Displayorder=$i";
+                    $result=$this->conn->query($sql);
+                }
+
+
+                $sql="UPDATE question set Displayon=$qid WHERE Displayon=$on AND Qid<>$qid";
+                $result=$this->conn->query($sql); 
+
+                $sql="UPDATE question set Displayorder=1 WHERE Qid=$qid";
+                $result=$this->conn->query($sql); 
+            }
+        }
+    }
+    public function moveDiagonallyDown($qid)
+    {
+        if($qid!=1)
+        {
+            $sql="SELECT * FROM question WHERE Qid=$qid";
+            $result=$this->conn->query($sql);
+            $row=$result->fetch_assoc();
+            $order=$row["Displayorder"];
+            $on=$row["Displayon"];
+            
+            //number of elemnts on key level
+            $sql="SELECT * FROM question WHERE Displayon=$on";
+            $result=$this->conn->query($sql);
+            $count=$result->num_rows;
+                
+            //number of child eelements 
+            $sql="SELECT * FROM question WHERE Displayon=$qid";
+            $result=$this->conn->query($sql);
+            $countchild=$result->num_rows;
+            
+            if($countchild)
+            {
+            //updationg display order of key and other elements which are with key
+                for($i=1;$i<=$count;$i++)
+                {
+                    $countchild++;
+                    $sql="UPDATE question set Displayorder=$countchild WHERE Displayon=$on AND Displayorder=$i";
+                    $result=$this->conn->query($sql);
+                }
+
+                //bringing chlid to same level
+                $sql="UPDATE question set Displayon=$on WHERE Displayon=$qid";
+                $result=$this->conn->query($sql); 
+            }
+
+        }
+    }
+   
     
     
 }
@@ -228,6 +298,16 @@ switch($function)
         $qid = utf8_encode($qid);
         $bot->moveDown($qid);        
         //$bot->deleteComplete();        
+        break;
+    case "move_diagonally_up": 
+        $qid = $_POST["qid"];
+        $qid = utf8_encode($qid);
+        $bot->moveDiagonallyUp($qid);        
+        break;
+    case "move_diagonally_down": 
+        $qid = $_POST["qid"];
+        $qid = utf8_encode($qid);
+        $bot->moveDiagonallyDown($qid);        
         break;
    
 }

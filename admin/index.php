@@ -1,5 +1,5 @@
 <?php
-    include "../include/connect.php";
+    include "verify.php";
 ?>
 <html>
 <head>
@@ -354,6 +354,10 @@
     </script>
 </head>
 <body>
+    <div class='nav'>
+        <p style="float:left;margin-left:10px"><?php echo $name ?></p>
+        <p style="float:right;margin-right:10px;cursor:pointer;" onclick="window.open('logout','_self')">LOGOUT</p>
+    </div>
     <ul id="myUL">
         <?php
             $sql="select * from question where Displayon='start'";
@@ -412,7 +416,7 @@
             </form>
         </div>
         <div id="circle-button">
-            <div class="add-circle" style="background-color:#99004d;transform: rotate(-45deg);" onclick="moveDiagonallyDown()" title="Move question diagonally down"><i class="fas fa-arrow-down"></i></div>
+            <!--<div class="add-circle" style="background-color:#99004d;transform: rotate(-45deg);" onclick="moveDiagonallyDown()" title="Move question diagonally down"><i class="fas fa-arrow-down"></i></div>-->
             
             <div class="add-circle" style="background-color:#009e73" onclick="moveDown()" title="Move question down"><i class="fas fa-arrow-down"></i></div>
             
@@ -424,7 +428,7 @@
             
             <div class="add-circle" style="background-color:#009e73" onclick="moveUp()" title="Move question up"><i class="fas fa-arrow-up"></i></div>
             
-            <div class="add-circle" style="background-color:#99004d;transform: rotate(-45deg);" onclick="moveDiagonallyUp()" title="Move question diagonally up"><i class="fas fa-arrow-up"></i></div>
+            <!--<div class="add-circle" style="background-color:#99004d;transform: rotate(-45deg);" onclick="moveDiagonallyUp()" title="Move question diagonally up"><i class="fas fa-arrow-up"></i></div>-->
         </div>
     </div>
     
