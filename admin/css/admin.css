@@ -47,9 +47,9 @@ li[data-expend="yes"]>.nested
 .align-bottom
 {
     position:fixed;
-    width: 300px;
+    width: 420px;
     bottom: 10px;
-    left: calc(50% - 170px);
+    left: calc(50% - 230px);
     padding: 20px;
 }
 .align-botton-background/* toggle movie */

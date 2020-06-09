@@ -1,10 +1,10 @@
 <?php
-    include "include/connect.php";
+    include "../include/connect.php";
 ?>
 <html>
 <head>
     <title>SKIT bot - Admin pannel</title>
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="css/admin.css">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.8.2/css/all.css" integrity="sha384-oS3vJWv+0UjzBfQzYUhtDYW+Pj2yciDJxpsK1OYPAYjqT085Qq/1cq5FLXAZQ7Ay" crossorigin="anonymous">
     <script>
@@ -27,6 +27,7 @@
             update=selected;
             document.getElementById("update-content").value=update.dataset.content;
             document.getElementById("update-type").value=update.dataset.type;
+            document.getElementById("update-remark").value=update.dataset.remark;
             selected.style.color="blue";
             if(ele.parentElement.dataset.expend=="no")
             {
@@ -79,6 +80,7 @@
             if(selected)
             {
                 var content=document.getElementById("content").value;
+                var remark=document.getElementById("remark").value;
                 var type=document.getElementById("type").value;
                 var qid=selected.dataset.qid;
                 
@@ -100,10 +102,11 @@
                 };
                 xhttp.open("POST", "back-end.php", true);
                 xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhttp.send("function=add_question&type="+type+"&content="+content+"&qid="+qid);
+                xhttp.send("function=add_question&type="+type+"&content="+content+"&remark="+remark+"&qid="+qid);
                 
             }
             document.getElementById("content").value="";
+            document.getElementById("remark").value="";
             return false;
         }
         function takeUpdate()
@@ -126,6 +129,7 @@
             if(update)
             {
                 var content=document.getElementById("update-content").value;
+                var remark=document.getElementById("update-remark").value;
                 var type=document.getElementById("update-type").value;
                 var qid=update.dataset.qid;
                 
@@ -147,7 +151,7 @@
                 };
                 xhttp.open("POST", "back-end.php", true);
                 xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
-                xhttp.send("function=update_question&type="+type+"&content="+content+"&qid="+qid);
+                xhttp.send("function=update_question&type="+type+"&content="+content+"&remark="+remark+"&qid="+qid);
                 
             }
             document.getElementById("content").value="";
@@ -261,6 +265,71 @@
                 alert("Please select a stage to move question down.");
             }
         }
+        function moveDiagonallyUp()
+        {
+            //selected bcz only buttons can move up and down diagonaly.
+            if(selected)
+            {
+                var qid=update.dataset.qid;
+                
+                var xhttp;
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() 
+                {
+                    if (this.readyState == 4 && this.status == 200) 
+                    {
+                        alert("Successful, Referesh page to see change.");
+                        document.getElementById("circle-button").style.display="block";
+                        document.getElementById("form-loader").style.display="none";
+                    }
+                    else
+                    {
+                        document.getElementById("circle-button").style.display="none";
+                        document.getElementById("form-loader").style.display="block";
+                    }
+                };
+                xhttp.open("POST", "back-end.php", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send("function=move_diagonally_up&qid="+qid);
+                
+            }
+            else
+            {
+                alert("Please select a stage to move question up.");
+            }
+        }
+        function moveDiagonallyDown()
+        {
+            if(selected)
+            {
+                var qid=update.dataset.qid;
+                
+                var xhttp;
+                xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function() 
+                {
+                    if (this.readyState == 4 && this.status == 200) 
+                    {
+                        alert("Successful, Referesh page to see change.");
+                        document.getElementById("circle-button").style.display="block";
+                        document.getElementById("form-loader").style.display="none";
+                    }
+                    else
+                    {
+                        document.getElementById("circle-button").style.display="none";
+                        document.getElementById("form-loader").style.display="block";
+                    }
+                };
+                xhttp.open("POST", "back-end.php", true);
+                xhttp.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
+                xhttp.send("function=move_diagonally_down&qid="+qid);
+                
+            }
+            else
+            {
+                alert("Please select a stage to move question down.");
+            }
+        }
         function changeSelectionForNormalList(ele)
         {
             if(update)
@@ -277,6 +346,7 @@
             update=ele;
             document.getElementById("update-content").value=ele.dataset.content;
             document.getElementById("update-type").value=ele.dataset.type;
+            document.getElementById("update-remark").value=ele.dataset.remark;
             
             update.style.color="orange";
             
@@ -317,6 +387,8 @@
                 <br><br>
                 <input type="text" id="content" placeholder="Enter the content" required>
                 <br><br>
+                <input type="text" id="remark" value="" placeholder="Link header[Only for link and download]">
+                <br><br>
                 <input type="submit" value="Add">
             </form>
         </div>
@@ -334,10 +406,14 @@
                 <br><br>
                 <input type="text" id="update-content" placeholder="Enter the content" required>
                 <br><br>
+                <input type="text" id="update-remark" placeholder="Link header[Only for link and download]">
+                <br><br>
                 <input type="submit" value="Add">
             </form>
         </div>
         <div id="circle-button">
+            <div class="add-circle" style="background-color:#99004d;transform: rotate(-45deg);" onclick="moveDiagonallyDown()" title="Move question diagonally down"><i class="fas fa-arrow-down"></i></div>
+            
             <div class="add-circle" style="background-color:#009e73" onclick="moveDown()" title="Move question down"><i class="fas fa-arrow-down"></i></div>
             
             <div class="add-circle" style="background-color:red" onclick="deleteQuestion()" title="Delete Question"><i class="fas fa-trash-alt"></i></div>
@@ -347,6 +423,8 @@
             <div class="add-circle" style="background-color:orange" onclick="takeUpdate()" title="Update Question"><i class="fas fa-pencil-alt"></i></div>
             
             <div class="add-circle" style="background-color:#009e73" onclick="moveUp()" title="Move question up"><i class="fas fa-arrow-up"></i></div>
+            
+            <div class="add-circle" style="background-color:#99004d;transform: rotate(-45deg);" onclick="moveDiagonallyUp()" title="Move question diagonally up"><i class="fas fa-arrow-up"></i></div>
         </div>
     </div>
     
