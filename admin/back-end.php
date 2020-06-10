@@ -1,5 +1,5 @@
 <?php
-include "verify.php";
+include "include/verify.php";
 date_default_timezone_set('Asia/Kolkata');
 class Chatbot
 {
