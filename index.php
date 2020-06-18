@@ -16,7 +16,7 @@
         <div class="chat-message-text-tab2" id="msg">
             <div class="login-box" id="details-form">
                 <h2>Fill your details</h2>
-                <form onsubmit="return submitUserInformation()">
+                <form accept-charset="utf-8" onsubmit="return submitUserInformation()">
                     <div class="user-box">
                         <input id="bot-user-name" type="text" required>
                         <label>Name</label>
@@ -29,7 +29,7 @@
                         <input id="bot-user-mobile" pattern="[0-9]{10}" type="tel" required>
                         <label>Phone Number</label>
                     </div>
-                    <input type="submit" value="Submit">
+                    <input id="submitButton" type="submit" value="Submit">
                 </form>
           </div>
              

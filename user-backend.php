@@ -76,35 +76,43 @@ class Chatbot
     }
     public function saveUserInfo($name,$email,$mobile)
     {
-        $all = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-        $random = '';
-        for ($i = 0; $i < 25; $i++) 
-            $random = $random.$all[rand(0, strlen($all)-1)];
-        $cookie = $random;
-
-        $match=0;
-        while($match==0)
+        if($email!='hms@skit.ac.in')
         {
-            $sql2="select * from users where Cookie='$cookie'";
-            $result2=$this->conn->query($sql2);
-            if($result2->num_rows==0)
+            $all = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            $random = '';
+            for ($i = 0; $i < 25; $i++) 
+                $random = $random.$all[rand(0, strlen($all)-1)];
+            $cookie = $random;
+    
+            $match=0;
+            while($match==0)
             {
-                setcookie('botUser',$cookie,0,"/"); 
-        
-                echo "Welcome, ".$name;
-                $sql="INSERT INTO users(Timestamp,Name,Email,Mobile,Cookie)
-                values($this->timestamp,'$name','$email','$mobile','$cookie')";
-                $sql=$this->conn->query($sql);
-                $match=1;
+                $sql2="select * from users where Cookie='$cookie'";
+                $result2=$this->conn->query($sql2);
+                if($result2->num_rows==0)
+                {
+                    setcookie('botUser',$cookie,0,"/"); 
+            
+                    echo "<div class='chat-message-text-tab2-received chat-count'>Welcome, $name<br><span class='time-received'></span></div>";
+                    
+                    $sql="INSERT INTO users(Timestamp,Name,Email,Mobile,Cookie)
+                    values($this->timestamp,'$name','$email','$mobile','$cookie')";
+                    $sql=$this->conn->query($sql);
+                    $match=1;
+                }
+                else
+                {
+                    $all = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
+                    $random = '';
+                    for ($i = 0; $i < 25; $i++) 
+                        $random = $random.$all[rand(0, strlen($all)-1)];
+                    $cookie = $random;
+                }
             }
-            else
-            {
-                $all = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
-                $random = '';
-                for ($i = 0; $i < 25; $i++) 
-                    $random = $random.$all[rand(0, strlen($all)-1)];
-                $cookie = $random;
-            }
+        }
+        else
+        {
+            echo "<div class='chat-message-text-tab2-received chat-count'>Welcome, $name<br><span class='time-received'></span></div>";
         }
     }
 }
@@ -112,7 +120,7 @@ class Chatbot
 $bot=new Chatbot($conn);
 $function = $_POST["function"];
 $function = utf8_encode($function);
-
+$function=htmlspecialchars($function, ENT_QUOTES);
 switch($function)
 {
     case "load_response": 
@@ -121,9 +129,15 @@ switch($function)
         $bot->loadResponse($qid);        
         break;
     case "user_info": 
-        $name = $_POST["name"];
-        $email = $_POST["email"];
-        $mobile = $_POST["mobile"];
+        
+        $name = $bot->conn->real_escape_string($_POST["name"]);
+        $email = $bot->conn->real_escape_string($_POST["email"]);
+        $mobile = $bot->conn->real_escape_string($_POST["mobile"]);
+        
+        $name=htmlspecialchars($name, ENT_QUOTES);
+        $email=htmlspecialchars($email, ENT_QUOTES);
+        $mobile=htmlspecialchars($mobile, ENT_QUOTES);
+        
         $name = utf8_encode($name);
         $email = utf8_encode($email);
         $mobile = utf8_encode($mobile);

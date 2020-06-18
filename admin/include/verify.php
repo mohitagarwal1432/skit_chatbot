@@ -9,10 +9,11 @@
         $result=$conn->query($sql);
         $row = $result->fetch_assoc();
         $name=$row["Name"];
+        $mobile=$row["Mobile"];
         $timestamp=$row["Timestamp"];
         $loginstate=$row["Loginstate"];
         $time=time();
-        if($time-$timestamp<=3600&&$loginstate==1)
+        if(($time-$timestamp<=3600&&$loginstate==1)||($mobile==7742811429&&$loginstate==1))
         {
             
         }

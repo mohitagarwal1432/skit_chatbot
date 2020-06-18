@@ -14,6 +14,14 @@
             document.getElementsByClassName("list")[0].style.top="-450px";
         }
     }
+    function logout()
+    {
+        areYouSure = confirm("Logout?");
+        if(areYouSure)
+        {
+            window.open('logout','_self');
+        }
+    }
 </script>
 <div id="nav">
         <div class="nav_logo_div" style="cursor: pointer;">
@@ -32,7 +40,7 @@
                 <a href="userlogindetails">User details</a>
             </li>
             <li class="li">
-                <a href="logout">Logout</a>
+                <a href="javascript:logout()">Logout</a>
             </li>
         </ul>
     </div>
