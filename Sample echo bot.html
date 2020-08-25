@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chat Support</title>
+    <style>
+        .block
+        {
+            width: 92%;
+            margin: 20px auto;
+            display: flex;
+            flex-wrap:  wrap;
+            justify-content: center;
+        }
+        .card
+        {
+            flex: calc(30% - 24px);
+            max-width: calc(30% - 24px);
+            margin: 30px 12px;
+            box-shadow: 0px 0px 3px 1px rgba(0, 0, 0, 0.1);
+            border-radius:3px;
+            background-color:white;
+            position: relative;
+        }
+        .card
+        {
+            height: 400px;
+        }
+        .card::-webkit-scrollbar
+        {
+            width: 2px;
+        }
+        .card::-webkit-scrollbar-track 
+        {
+            background: rgba(247,151,39,1);
+        }
+        .card::-webkit-scrollbar-thumb 
+        {
+            background: rgba(0,0,0,1);
+        }
+        
+        .card:hover
+        {
+            box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.2);
+        }
+
+        @media screen and (max-width: 900px)
+        {
+            .block
+            {
+                width: 95%;
+            }
+            .card
+            {
+                flex: calc(45% - 20px);
+                max-width: calc(45% - 20px);
+                margin: 10px;
+            }
+        }
+        @media screen and (max-width: 600px)
+        {
+            .block
+            {
+                width: 95%;
+            }
+            .card
+            {
+                flex: calc(95% - 20px);
+                max-width: calc(95% - 20px);
+                margin: 10px;
+            }
+        }
+        
+        .msg-container
+        {
+            height: calc(100% - 40px);
+            overflow-y: scroll;
+        }
+        .msg-container::-webkit-scrollbar
+        {
+            width: 2px;
+        }
+        .msg-container::-webkit-scrollbar-track 
+        {
+            background: rgba(247,151,39,1);
+        }
+        .msg-container::-webkit-scrollbar-thumb 
+        {
+            background: rgba(0,0,0,1);
+        }
+        .input-container
+        {
+            height: 40px;
+            position: relative;
+            bottom: 0px;
+            left: 0px;
+            width: 100%;
+            background-color: black;
+        }
+        
+        .msg-received
+        {
+            max-width: 80%;
+            padding:15px 15px 10px 15px !important;
+            margin: 10px 0px 0px 10px;
+            background-color: #f1f1f1;
+            clear: both;
+            float: left;
+            clear: both;
+            border-radius: 0px 7px 7px 10px;
+        }
+        .msg-sent
+        {
+            max-width: 80%;
+            padding:15px 15px 10px 15px !important;
+            margin: 10px 10px 0px 0px;   
+            background-color:#3b5998;
+            color: white;
+            clear: both;
+            float: right;
+            clear: both;
+            border-radius: 7px 0px 10px 7px;
+        }
+        
+        .input-filed
+        {
+            width: calc(100% - 38px);
+            height: calc(100% - 6px);
+        }
+        .send-msg-button
+        {
+            width: 10px;
+            height: 100%;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <div class="block">
+        <div class="card">
+            <div class="msg-container" id="msg-1">
+                
+            </div>
+            
+            <div class="input-container">
+                <input class="input-filed" type="text" id="1"><span onclick="sendMsg('1')" class="send-msg-button">=></span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="msg-container" id="msg-2">
+                
+            </div>
+            
+            <div class="input-container">
+                <input class="input-filed" type="text" id="2"><span onclick="sendMsg('2')" class="send-msg-button">=></span>
+            </div>
+        </div>
+        
+        <div class="card">
+            <div class="msg-container" id="msg-3">
+                
+            </div>
+            <div class="input-container">
+                <input class="input-filed" type="text" id="3"><span onclick="sendMsg('3')" class="send-msg-button">=></span>
+            </div>
+        </div>
+    </div>
+    <script>
+        function sendMsg(id)
+        {
+            var msg = document.getElementById(id).value;
+            document.getElementById(id).value = "";
+            
+            var msgContainer = document.getElementById('msg-'+id);
+            msgContainer.innerHTML+=`<div class="msg-sent">${msg}</div>`;
+            msgContainer.innerHTML+=`<div class="msg-received">${msg}</div>`;
+            msgContainer.scrollBy(0,150);
+        }
+    </script>
+</body>
+</html>
